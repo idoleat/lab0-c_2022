@@ -17,13 +17,12 @@
  */
 struct list_head *q_new()
 {
-    element_t *q = malloc(sizeof(element_t));
-    if (q == NULL)
+    struct list_head *h = malloc(sizeof(struct list_head));
+    if (h == NULL)
         return NULL;
 
-    INIT_LIST_HEAD(&q->list);  // Todo: what about using LIST_HEAD(head)?
-    q->value = NULL;
-    return &q->list;
+    INIT_LIST_HEAD(h);  // Todo: what about using LIST_HEAD(head)?
+    return h;
 }
 
 /* Free all storage used by queue */
