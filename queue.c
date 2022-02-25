@@ -19,7 +19,8 @@ struct list_head *q_new()
 {
     struct list_head *h = malloc(sizeof(struct list_head));
     if (h == NULL)
-        return NULL;
+        return NULL;  // it's not enough for Linux. Should consider the over
+                      // commit situation
 
     INIT_LIST_HEAD(h);  // Todo: what about using LIST_HEAD(head)?
     return h;
@@ -47,8 +48,8 @@ bool q_insert_head(struct list_head *head, char *s)
         return false;
     }
 
-    strncpy(q->value, s, strlen(s) + 1);
-    // q->value[strlen(s)] = '\0';
+    strncpy(q->value, s, strlen(s));
+    q->value[strlen(s)] = '\0';
     list_add(&q->list, head);
     return true;
 }
@@ -62,6 +63,19 @@ bool q_insert_head(struct list_head *head, char *s)
  */
 bool q_insert_tail(struct list_head *head, char *s)
 {
+    element_t *q = malloc(sizeof(element_t));
+    if (q == NULL)
+        return false;
+
+    q->value = malloc(sizeof(char) * (strlen(s) + 1));
+    if (q->value == NULL) {
+        free(q);
+        return false;
+    }
+
+    strncpy(q->value, s, strlen(s));
+    q->value[strlen(s)] = '\0';
+    list_add_tail(&q->list, head);
     return true;
 }
 
@@ -81,7 +95,18 @@ bool q_insert_tail(struct list_head *head, char *s)
  */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    return NULL;
+    if (head == NULL || list_empty(head))
+        return NULL;
+
+    // cppcheck-suppress nullPointer
+    element_t *first_entry = list_first_entry(head, element_t, list);
+    if (sp) {
+        sp = strncpy(sp, first_entry->value, bufsize - 1);
+        sp[bufsize - 1] = '\0';
+    }
+
+    list_del(&first_entry->list);  // how about list_del_init?
+    return first_entry;
 }
 
 /*
