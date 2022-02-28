@@ -225,13 +225,34 @@ void q_swap(struct list_head *head)
 }
 
 /*
+ * Swap the next and prev of a list_head
+ */
+void inline node_np_swap(struct list_head *node)
+{
+    struct list_head *tmp;
+    tmp = node->next;
+    node->next = node->prev;
+    node->prev = tmp;
+}
+
+/*
  * Reverse elements in queue
  * No effect if q is NULL or empty
  * This function should not allocate or free any list elements
  * (e.g., by calling q_insert_head, q_insert_tail, or q_remove_head).
  * It should rearrange the existing ones.
  */
-void q_reverse(struct list_head *head) {}
+void q_reverse(struct list_head *head)
+{
+    if (head == NULL || list_empty(head))
+        return;
+
+    struct list_head *node, *tmp;
+    list_for_each_safe (node, tmp, head) {
+        node_np_swap(node);
+    }
+    node_np_swap(head);
+}
 
 /*
  * Sort elements of queue in ascending order
