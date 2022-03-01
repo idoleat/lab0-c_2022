@@ -56,6 +56,9 @@ void q_free_recurrence()
  */
 bool q_insert_head(struct list_head *head, char *s)
 {
+    if (head == NULL)
+        return false;
+
     element_t *q = malloc(sizeof(element_t));
     if (q == NULL)
         return false;
@@ -81,6 +84,9 @@ bool q_insert_head(struct list_head *head, char *s)
  */
 bool q_insert_tail(struct list_head *head, char *s)
 {
+    if (head == NULL)
+        return false;
+
     element_t *q = malloc(sizeof(element_t));
     if (q == NULL)
         return false;
