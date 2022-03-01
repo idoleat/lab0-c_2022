@@ -221,7 +221,24 @@ bool q_delete_dup(struct list_head *head)
  */
 void q_swap(struct list_head *head)
 {
-    // https://leetcode.com/problems/swap-nodes-in-pairs/
+    // https://leetcode.com/problems/swap-nodes-in-pairs
+    if (head == NULL)
+        return;
+
+    struct list_head *iterator = head->prev;
+    bool last = true;
+    int size = q_size(head);
+    if ((size & 1) == 1) {
+        list_move(iterator, head);
+        size -= 1;
+    }
+    while (size--) {
+        iterator = head->prev;
+        if (last)
+            iterator = iterator->prev;
+        list_move(iterator, head);
+        last = !last;
+    }
 }
 
 /*
@@ -229,6 +246,7 @@ void q_swap(struct list_head *head)
  */
 void inline node_np_swap(struct list_head *node)
 {
+    // Todo: uses XOR to swap
     struct list_head *tmp;
     tmp = node->next;
     node->next = node->prev;
